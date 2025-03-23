@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introvert Social Energy Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      height: 100%;
+    }
+    #start-screen, #app {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    #start-screen {
+      background-image: url('start-scene.png');
+      z-index: 10;
+    }
+    .start-btn {
+      margin-top: 320px;
+      padding: 0.75rem 2rem;
+      font-size: 1.2rem;
+      border-radius: 1rem;
+      border: none;
+      background-color: #FFFFFF;
+      color: #3B3B3B;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .start-btn:hover {
+      background-color: #FFE2C6;
+    }
+    #app {
+      background-image: url('question-bg.png');
+      display: none;
+      padding: 2rem;
+    }
+    #quiz-box {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 1rem;
+      max-width: 600px;
+      width: 90%;
+      padding: 2rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+    h1 { font-size: 1.8rem; margin-bottom: 1rem; color: #3B3B3B; }
+    .question {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 1.5rem 0 1rem;
+      color: #3B3B3B;
+    }
+    .answers {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .answer-btn {
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 0.75rem;
+      background-color: #FFFFFF;
+      color: #3B3B3B;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .answer-btn:hover { background-color: #E6D6FF; }
+    #result h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    #summary {
+      text-align: left;
+      margin-top: 2rem;
+      font-size: 1rem;
+      color: #333;
+    }
+    #restart {
+      margin-top: 1.5rem;
+      background-color: #FF90B3;
+    }
+  </style>
+</head>
+<body>
+  <div id="start-screen">
+    <button class="start-btn" onclick="startQuiz()">Start</button>
+  </div>
+  <div id="app">
+    <div id="quiz-box">
+      <h1>Introvert Social Energy Quiz</h1>
+      <div id="quiz-container"></div>
+      <div id="result" style="display: none;"></div>
+    </div>
+  </div>
+  <script>
+    function startQuiz() {
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+    }
+    const quizData = [
+      { question: '☕ Trying a new café together', answers: [
+        { text: '🔋 I\'m fully charged – I love this!', score: 3 },
+        { text: '🤔 Hmm... depends on the vibe.', score: 2 },
+        { text: '😵 This will drain me!', score: 1 }
+      ]},
+      { question: '🚴‍♀️ Exercising together (gym, cycling, etc.)', answers: [
+        { text: '🔋 I\'m fully charged – I love this!', score: 3 },
+        { text: '🤔 Hmm... depends on the vibe.', score: 2 },
+        { text: '😵 This will drain me!', score: 1 }
+      ]},
+      { question: '🎬 Movie night at home or crowded cinema', answers: [
+        { text: '🔋 I\'m fully charged – I love this!', score: 3 },
+        { text: '🤔 Hmm... depends on the vibe.', score: 2 },
+        { text: '😵 This will drain me!', score: 1 }
+      ]},
+      { question: '🎡 Travelling within Malaysia (day trip or weekend escape)', answers: [
+        { text: '🔋 I\'m fully charged – I love this!', score: 3 },
+        { text: '🤔 Hmm... depends on the vibe.', score: 2 },
+        { text: '😵 This will drain me!', score: 1 }
+      ]},
+      { question: '🌳 Casual walk in a quiet park', answers: [
+        { text: '🔋 I\'m fully charged – I love this!', score: 3 },
+        { text: '🤔 Hmm... depends on the vibe.', score: 2 },
+        { text: '😵 This will drain me!', score: 1 }
+      ]},
+      { question: '🍳 Staying in and cooking together', answers: [
+        { text: '🔋 I\'m fully charged – I love this!', score: 3 },
+        { text: '🤔 Hmm... depends on the vibe.', score: 2 },
+        { text: '😵 This will drain me!', score: 1 }
+      ]}
+    ];
+    let current = 0;
+    let totalScore = 0;
+    let userChoices = [];
+    const quizContainer = document.getElementById('quiz-container');
+    const resultContainer = document.getElementById('result');
+    function showQuestion() {
+      quizContainer.innerHTML = '';
+      if (current < quizData.length) {
+        const q = quizData[current];
+        const qText = document.createElement('div');
+        qText.className = 'question';
+        qText.textContent = (current + 1) + '. ' + q.question;
+        quizContainer.appendChild(qText);
+        const answersDiv = document.createElement('div');
+        answersDiv.className = 'answers';
+        q.answers.forEach((a) => {
+          const btn = document.createElement('button');
+          btn.className = 'answer-btn';
+          btn.textContent = a.text;
+          btn.onclick = () => {
+            totalScore += a.score;
+            userChoices.push({ question: q.question, answer: a.text.trim().slice(0, 2) });
+            current++;
+            showQuestion();
+          };
+          answersDiv.appendChild(btn);
+        });
+        quizContainer.appendChild(answersDiv);
+      } else {
+        showResult();
+      }
+    }
+    function showResult() {
+      quizContainer.style.display = 'none';
+      resultContainer.style.display = 'block';
+      resultContainer.innerHTML = '';
+      const title = document.createElement('h2');
+      const msg = document.createElement('p');
+      if (totalScore >= 15) {
+        title.textContent = '🌟 The Adventurer';
+        msg.textContent = "You're up for anything! Let's plan an exciting day together.";
+      } else if (totalScore >= 10) {
+        title.textContent = '☕ The Cosy Soul';
+        msg.textContent = "You like a balance of fun and quiet. A movie or cafe date sounds perfect.";
+      } else {
+        title.textContent = '👑 The Recharge Queen';
+        msg.textContent = "You recharge best in calm, comfy spaces. Let's keep it low-key and relaxing.";
+      }
+      resultContainer.appendChild(title);
+      resultContainer.appendChild(msg);
+      const summaryTitle = document.createElement('h3');
+      summaryTitle.textContent = '🌟 Your Social Energy Summary:';
+      resultContainer.appendChild(summaryTitle);
+      const summary = document.createElement('div');
+      summary.id = 'summary';
+      userChoices.forEach((item, index) => {
+        const line = document.createElement('p');
+        line.textContent = `${index + 1}. ${item.question} – ${item.answer}`;
+        summary.appendChild(line);
+      });
+      resultContainer.appendChild(summary);
+      const shareMsg = document.createElement('p');
+      shareMsg.style.marginTop = '1rem';
+      shareMsg.style.fontWeight = '600';
+      shareMsg.textContent = '📸 Share this with your date!';
+      resultContainer.appendChild(shareMsg);
+      const restartBtn = document.createElement('button');
+      restartBtn.className = 'answer-btn';
+      restartBtn.id = 'restart';
+      restartBtn.textContent = 'Restart Quiz';
+      restartBtn.onclick = () => {
+        current = 0;
+        totalScore = 0;
+        userChoices = [];
+        quizContainer.style.display = 'block';
+        resultContainer.style.display = 'none';
+        showQuestion();
+      };
+      resultContainer.appendChild(restartBtn);
+    }
+    showQuestion();
+  </script>
+</body>
+</html>
